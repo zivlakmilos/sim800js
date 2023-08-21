@@ -70,10 +70,6 @@ class SIM800 {
     });
   }
 
-  sendMessage(phone: string, txt: string): boolean {
-    return false;
-  }
-
   sendHandshake(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.queue.push({
@@ -90,6 +86,33 @@ class SIM800 {
         this.processQueue();
       }
     });
+  }
+
+  getSignalQuality(): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this.queue.push({
+        data: 'AT+CSQ',
+        callback: (data: string) => {
+          console.log(data);
+          const split = data.split(':');
+          if (split.length < 1) {
+            resolve(0);
+          }
+          resolve(parseFloat(split[1]));
+        }
+      })
+      if (!this.current) {
+        this.processQueue();
+      }
+    });
+  }
+
+  sendMessage(phone: string, txt: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+    });
+  }
+
+  listMessages(): void {
   }
 
   private processQueue() {

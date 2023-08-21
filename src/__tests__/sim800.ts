@@ -19,6 +19,11 @@ describe('test SIM800', () => {
     expect(handshake).toBe(true);
   });
 
+  test('test SIM800 Signal Quality', async () => {
+    const signalQuality = await sim800.getSignalQuality();
+    expect(signalQuality).toBeLessThanOrEqual(31);
+  });
+
   test('test SIM800 Send SMS', async () => {
   });
 
