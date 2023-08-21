@@ -1,0 +1,27 @@
+{
+  "name": "sim800",
+  "version": "1.0.0",
+  "description": "NodeJS Library for SIM800 Module",
+  "main": "dist/sim800.js",
+  "types": "dist/sim800.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zivlakmilos/sim800js.git"
+  },
+  "keywords": [
+    "SIM800"
+  ],
+  "author": "Milos Zivlak (https://zivlak.rs)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zivlakmilos/sim800js/issues"
+  },
+  "homepage": "https://github.com/zivlakmilos/sim800js#readme",
+  "dependencies": {
+    "typescript": "^5.1.6"
+  }
+}
