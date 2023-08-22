@@ -24,6 +24,11 @@ describe('test SIM800', () => {
     expect(signalQuality).toBeLessThanOrEqual(31);
   });
 
+  test('test SIM800 Get SIM Info', async () => {
+    const simInfo = await sim800.getSimInfo();
+    expect(simInfo.length).toBeGreaterThan(5);
+  });
+
   test('test SIM800 Send SMS', async () => {
   });
 

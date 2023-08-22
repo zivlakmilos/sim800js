@@ -93,12 +93,25 @@ class SIM800 {
       this.queue.push({
         data: 'AT+CSQ',
         callback: (data: string) => {
-          console.log(data);
           const split = data.split(':');
           if (split.length < 1) {
             resolve(0);
           }
           resolve(parseFloat(split[1]));
+        }
+      })
+      if (!this.current) {
+        this.processQueue();
+      }
+    });
+  }
+
+  getSimInfo(): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.queue.push({
+        data: 'AT+CCID',
+        callback: (data: string) => {
+          resolve(data);
         }
       })
       if (!this.current) {
