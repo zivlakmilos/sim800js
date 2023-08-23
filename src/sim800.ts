@@ -27,7 +27,12 @@ class SIM800 {
     this.parser = this.tty.pipe(new ReadlineParser({ delimiter: '\r\n', }));
 
     this.parser.on('data', data => {
-      const trimData = data.trim();
+      const trimData: string = data.trim();
+
+      if (trimData.at(0) === '+') {
+        // TODO: Implement handling async messages
+        return;
+      }
 
       if (!this.current) {
         return;

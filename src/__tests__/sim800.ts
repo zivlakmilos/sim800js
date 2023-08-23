@@ -32,9 +32,6 @@ describe('test SIM800', () => {
   test('test SIM800 Send SMS', async () => {
   });
 
-  test('test SIM800 List SMS', async () => {
-  });
-
   test('test SIM800 Read SMS', async () => {
   });
 
