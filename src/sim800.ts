@@ -149,19 +149,18 @@ class SIM800 {
     });
   }
 
-  onReceiveMessage(callback: ReceiveMessageCallback): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      this.queue.push({
-        data: 'AT+CFMG=1',
-      });
-      this.queue.push({
-        data: 'AT+CNMI=2,1,0,0,0',
-      });
-      this.receiveMessageCallback = callback;
-      if (!this.current) {
-        this.processQueue();
-      }
+  onReceiveMessage(callback: ReceiveMessageCallback): void {
+    this.receiveMessageCallback = callback;
+
+    this.queue.push({
+      data: 'AT+CFMG=1',
     });
+    this.queue.push({
+      data: 'AT+CNMI=2,1,0,0,0',
+    });
+    if (!this.current) {
+      this.processQueue();
+    }
   }
 
   private processQueue() {
