@@ -6,8 +6,10 @@ export type SIM800Options = {
 
 type Queue = {
   data: string,
-  callback: (data: string) => void,
+  callback?: (data: string) => void,
 }
+
+type ReceiveMessageCallback = (phone: string, text: string) => void;
 
 class SIM800 {
   private tty: SerialPort;
@@ -15,6 +17,9 @@ class SIM800 {
 
   private queue: Queue[] = [];
   private current: Queue | undefined = undefined;
+
+  private receiveMessageCallback?: ReceiveMessageCallback;
+  private receivePhone?: string;
 
   constructor(private port: string, private options: SIM800Options | undefined = undefined) {
     this.tty = new SerialPort({
@@ -29,8 +34,20 @@ class SIM800 {
     this.parser.on('data', data => {
       const trimData: string = data.trim();
 
-      if (trimData.at(0) === '+') {
-        // TODO: Implement handling async messages
+      if (trimData.at(0) === '+' && trimData.substring(0, 4) !== '+CSQ') {
+        if (trimData.startsWith('+CMT')) {
+          const split = trimData.split('"');
+          if (split.length >= 1) {
+            this.receivePhone = split[1];
+          }
+        }
+        return;
+      }
+      if (this.receivePhone) {
+        if (this.receiveMessageCallback) {
+          this.receiveMessageCallback(this.receivePhone, trimData);
+        }
+        this.receivePhone = undefined;
         return;
       }
 
@@ -41,7 +58,9 @@ class SIM800 {
         return;
       }
 
-      this.current.callback(trimData);
+      if (this.current.callback) {
+        this.current.callback(trimData);
+      }
       this.processQueue();
     });
   }
@@ -125,12 +144,24 @@ class SIM800 {
     });
   }
 
-  sendMessage(phone: string, txt: string): Promise<boolean> {
+  sendMessage(phone: string, text: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
     });
   }
 
-  listMessages(): void {
+  onReceiveMessage(callback: ReceiveMessageCallback): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.queue.push({
+        data: 'AT+CFMG=1',
+      });
+      this.queue.push({
+        data: 'AT+CNMI=2,1,0,0,0',
+      });
+      this.receiveMessageCallback = callback;
+      if (!this.current) {
+        this.processQueue();
+      }
+    });
   }
 
   private processQueue() {
