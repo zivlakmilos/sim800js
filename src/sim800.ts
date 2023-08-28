@@ -34,6 +34,14 @@ class SIM800 {
     this.parser.on('data', data => {
       const trimData: string = data.trim();
 
+      if (!trimData.length) {
+        return;
+      }
+
+      if (trimData === 'Call Ready' || trimData === 'SMS Ready') {
+        return;
+      }
+
       if (trimData.at(0) === '+' && trimData.substring(0, 4) !== '+CSQ') {
         if (trimData.startsWith('+CMT')) {
           const split = trimData.split('"');
@@ -43,6 +51,7 @@ class SIM800 {
         }
         return;
       }
+
       if (this.receivePhone) {
         if (this.receiveMessageCallback) {
           this.receiveMessageCallback(this.receivePhone, trimData);
@@ -51,17 +60,14 @@ class SIM800 {
         return;
       }
 
-      if (!this.current) {
-        return;
-      }
-      if (this.current.data === trimData) {
-        return;
+      if (this.current && this.current.data !== trimData && this.current.callback) {
+        this.current.callback(trimData);
+        this.current = undefined;
       }
 
-      if (this.current.callback) {
-        this.current.callback(trimData);
+      if (trimData === 'OK' || trimData === '>') {
+        this.processQueue();
       }
-      this.processQueue();
     });
   }
 
@@ -146,6 +152,27 @@ class SIM800 {
 
   sendMessage(phone: string, text: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
+      this.queue.push({
+        data: 'AT+CMGF=1',
+      });
+      this.queue.push({
+        data: `AT+CMGS="${phone}"`,
+      });
+      this.queue.push({
+        data: `${text}${String.fromCharCode(0x1A)}`,
+        callback: (data: string) => {
+          console.log(data);
+          if (data === 'OK') {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        }
+      });
+
+      if (!this.current) {
+        this.processQueue();
+      }
     });
   }
 
@@ -153,10 +180,10 @@ class SIM800 {
     this.receiveMessageCallback = callback;
 
     this.queue.push({
-      data: 'AT+CFMG=1',
+      data: 'AT+CMGF=1',
     });
     this.queue.push({
-      data: 'AT+CNMI=2,1,0,0,0',
+      data: 'AT+CNMI=1,2,0,0,0',
     });
     if (!this.current) {
       this.processQueue();
