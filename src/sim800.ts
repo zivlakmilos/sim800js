@@ -6,6 +6,7 @@ export type SIM800Options = {
 
 type Queue = {
   data: string,
+  ignoreDelimeter?: boolean,
   callback?: (data: string) => void,
 }
 
@@ -17,6 +18,7 @@ class SIM800 {
 
   private queue: Queue[] = [];
   private current: Queue | undefined = undefined;
+  private busy: boolean = false;
 
   private receiveMessageCallback?: ReceiveMessageCallback;
   private receivePhone?: string;
@@ -60,7 +62,7 @@ class SIM800 {
         return;
       }
 
-      if (this.current && this.current.data !== trimData && this.current.callback) {
+      if (this.current && this.current.data.replace(String.fromCharCode(0x1A), '') !== trimData && this.current.callback) {
         this.current.callback(trimData);
         this.current = undefined;
       }
@@ -112,7 +114,7 @@ class SIM800 {
           }
         }
       })
-      if (!this.current) {
+      if (!this.busy) {
         this.processQueue();
       }
     });
@@ -130,7 +132,7 @@ class SIM800 {
           resolve(parseFloat(split[1]));
         }
       })
-      if (!this.current) {
+      if (!this.busy) {
         this.processQueue();
       }
     });
@@ -144,7 +146,7 @@ class SIM800 {
           resolve(data);
         }
       })
-      if (!this.current) {
+      if (!this.busy) {
         this.processQueue();
       }
     });
@@ -160,6 +162,7 @@ class SIM800 {
       });
       this.queue.push({
         data: `${text}${String.fromCharCode(0x1A)}`,
+        ignoreDelimeter: true,
         callback: (data: string) => {
           console.log(data);
           if (data === 'OK') {
@@ -170,7 +173,7 @@ class SIM800 {
         }
       });
 
-      if (!this.current) {
+      if (!this.busy) {
         this.processQueue();
       }
     });
@@ -185,7 +188,7 @@ class SIM800 {
     this.queue.push({
       data: 'AT+CNMI=1,2,0,0,0',
     });
-    if (!this.current) {
+    if (!this.busy) {
       this.processQueue();
     }
   }
@@ -194,10 +197,20 @@ class SIM800 {
     const next = this.queue.shift();
     this.current = next;
     if (!next) {
+      this.busy = false;
       return;
     }
 
-    this.tty.write(next.data + '\r\n');
+    this.busy = true;
+
+    let data = next.data;
+    if (!next.ignoreDelimeter) {
+      data += '\r\n';
+    }
+
+    const buf = Buffer.from(data, 'ascii');
+    console.log(buf);
+    this.tty.write(buf);
   }
 }
 

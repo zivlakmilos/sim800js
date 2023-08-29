@@ -29,11 +29,12 @@ describe('test SIM800', () => {
     expect(simInfo.length).toBeGreaterThan(5);
   });
 
+  /*
   test('test SIM800 Send SMS', async () => {
-  });
-
-  test('test SIM800 Read SMS', async () => {
-  });
+    const isOk = await sim800.sendMessage('+xxxxxxxx', 'Test :D');
+    expect(isOk).toBe(true);
+  }, 60000);
+  */
 
   test('test SIM800 Close', async () => {
     const isClosed = await sim800.close();
