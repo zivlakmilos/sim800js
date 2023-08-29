@@ -1,6 +1,6 @@
 import SIM800 from 'sim800';
 
-const sendMessageExample = async () => {
+const echo = async () => {
   const sim800 = new SIM800('/dev/ttyUSB0', {
     baudRate: 115200,
   });
@@ -17,13 +17,11 @@ const sendMessageExample = async () => {
     return;
   }
 
-  const phone = "+xxxxxxxx";
-  const message = "Test :D"
-  const isOk = await sim800.sendMessage('+xxxxxxxx', 'Test :D');
-  if (!isOk) {
-    console.log(`Failed to send messgae ${message} to ${phone}`)
-    return;
-  }
-
-  console.log('Success!');
+  sim800.onReceiveMessage(async (phone, message) => {
+    console.log(`Received ${message} from ${phone}`);
+    const isOk = await sim800.sendMessage(phone, message);
+    if (!isOk) {
+      console.log(`Failed to send messgae ${message} to ${phone}`)
+    }
+  });
 }
