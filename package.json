@@ -1,5 +1,5 @@
 {
-  "name": "sim800",
+  "name": "sim800js",
   "version": "1.0.0",
   "description": "NodeJS Library for SIM800 Module",
   "main": "dist/sim800.js",
