@@ -209,7 +209,6 @@ class SIM800 {
     }
 
     const buf = Buffer.from(data, 'ascii');
-    console.log(buf);
     this.tty.write(buf);
   }
 }
