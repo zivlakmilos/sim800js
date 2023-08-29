@@ -26,7 +26,7 @@ class SIM800 {
   constructor(private port: string, private options: SIM800Options | undefined = undefined) {
     this.tty = new SerialPort({
       path: port,
-      baudRate: options?.baudRate || 9600,
+      baudRate: options?.baudRate || 115200,
       autoOpen: false,
       endOnClose: true,
     });
