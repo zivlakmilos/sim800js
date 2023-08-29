@@ -25,6 +25,20 @@ yarn add sim800
 
 ### API
 
+#### Import
+
+ES6:
+
+```javascript
+import SIM800 from 'sim800js';
+```
+
+CommonJS:
+
+```javascript
+const SIM800 = require('sim800js');
+```
+
 #### Constructor
 
 ```javascript
@@ -103,7 +117,7 @@ onReceiveMessage(callback: ReceiveMessageCallback): void
 ### Examples
 
 ```javascript
-import SIM800 from 'sim800';
+import SIM800 from 'sim800js';
 
 const echo = async () => {
   const sim800 = new SIM800('/dev/ttyUSB0', {
