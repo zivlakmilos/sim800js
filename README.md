@@ -30,13 +30,13 @@ yarn add sim800
 ES6:
 
 ```javascript
-import SIM800 from 'sim800js';
+import { SIM800 } from 'sim800js';
 ```
 
 CommonJS:
 
 ```javascript
-const SIM800 = require('sim800js');
+const { SIM800 } = require('sim800js');
 ```
 
 #### Constructor
@@ -117,7 +117,7 @@ onReceiveMessage(callback: ReceiveMessageCallback): void
 ### Examples
 
 ```javascript
-import SIM800 from 'sim800js';
+import { SIM800 } from 'sim800js';
 
 const echo = async () => {
   const sim800 = new SIM800('/dev/ttyUSB0', {

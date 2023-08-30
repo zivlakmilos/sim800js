@@ -1,4 +1,4 @@
-import SIM800 from 'sim800js';
+import { SIM800 } from 'sim800js';
 
 const echo = async () => {
   const sim800 = new SIM800('/dev/ttyUSB0', {
