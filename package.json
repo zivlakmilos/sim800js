@@ -1,6 +1,6 @@
 {
   "name": "sim800js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "NodeJS Library for SIM800 Module",
   "main": "dist/sim800.js",
   "types": "dist/sim800.d.ts",
