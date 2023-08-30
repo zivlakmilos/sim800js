@@ -1,4 +1,4 @@
-import SIM800, { SIM800Options } from "../sim800";
+import { SIM800, SIM800Options } from "../sim800";
 
 const PORT = '/dev/ttyUSB0';
 const CONFIG = {

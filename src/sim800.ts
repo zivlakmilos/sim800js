@@ -12,7 +12,7 @@ type Queue = {
 
 type ReceiveMessageCallback = (phone: string, text: string) => void;
 
-class SIM800 {
+export class SIM800 {
   private tty: SerialPort;
   private parser: ReadlineParser;
 
@@ -212,5 +212,3 @@ class SIM800 {
     this.tty.write(buf);
   }
 }
-
-export default SIM800;
